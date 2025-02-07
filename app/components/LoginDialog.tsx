@@ -8,8 +8,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
 
 export default function LoginDialog() {
+  const { login } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,10 +33,7 @@ export default function LoginDialog() {
         alert("Login successful!");
         setIsOpen(false);
 
-        // Store user session (can be JWT, local storage, etc.)
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Clear input fields
+        login(data.token);
         setEmail("");
         setPassword("");
       } else {
