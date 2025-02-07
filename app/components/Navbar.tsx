@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import LoginDialog from "./LoginDialog";
 import SignUpDialog from "./SignUpDialog";
+import Link from "next/link";
 
 export default function Navbar() {
   const { user, checkAuth, logout } = useAuthStore();
@@ -43,12 +44,12 @@ export default function Navbar() {
               </button>
               <ul className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    href="/profile" // ✅ Replace `#` with actual profile page route
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
                     Profile
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <button

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 interface AuthState {
   user: { email: string } | null;
+  isAuthenticated: () => boolean;
   login: (token: string) => void;
   logout: () => void;
   checkAuth: () => void;
@@ -11,7 +12,7 @@ interface AuthState {
 // Zustand store for authentication
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-
+  isAuthenticated: () => !!Cookies.get("authToken"),
   // Function to log in the user and update the store
   login: (token) => {
     Cookies.set("authToken", token, { expires: 7 });
