@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import Cookies from "js-cookie";
+import { redirect } from "next/navigation";
 
 interface AuthState {
   user: { email: string } | null;
@@ -29,7 +30,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // Function to check if the user is already logged in
   checkAuth: () => {
     const token = Cookies.get("authToken");
 
@@ -51,5 +51,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     Cookies.remove("authToken");
     set({ user: null });
+    redirect("/");
   },
 }));
