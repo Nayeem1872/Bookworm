@@ -35,14 +35,14 @@ export default function Profile() {
     <>
       <Navbar />
 
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold">User Profile</h1>
+      <div className="container mx-auto p-4 ">
+        <h1 className="text-2xl font-bold mt-32">User Profile</h1>
         <p>Welcome to your profile page!</p>
 
         {isAuthenticated() && <AddBookDialog refreshBooks={fetchBooks} />}
       </div>
 
-      <BookList books={books} />
+      <BookList books={books} refreshBooks={fetchBooks} />
     </>
   );
 }

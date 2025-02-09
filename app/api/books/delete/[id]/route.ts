@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
-export async function GET() {
+export async function DELETE(req: Request) {
   try {
     await connectToDatabase();
 
@@ -24,19 +24,30 @@ export async function GET() {
       return NextResponse.json({ message: "Invalid token" }, { status: 403 });
     }
 
-    const userEmail = (decoded as jwt.JwtPayload).email;
+    const url = new URL(req.url);
+    const segments = url.pathname.split("/");
+    const bookId = segments[segments.length - 1];
 
-    // ✅ Ensure all fields are selected, including `price`, `rating`, and `genre`
-    const books = await Book.find({ addedBy: userEmail })
-      .select(
-        "title author description imageUrl price rating genre addedBy createdAt"
-      )
-      .sort({ createdAt: -1 });
+    if (!bookId) {
+      return NextResponse.json(
+        { message: "Book ID is required" },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ books }, { status: 200 });
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+
+    if (!deletedBook) {
+      return NextResponse.json({ message: "Book not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "Book deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
-      { message: "Failed to fetch books", error: (error as Error).message },
+      { message: "Failed to delete book", error: (error as Error).message },
       { status: 500 }
     );
   }

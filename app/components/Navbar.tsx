@@ -1,65 +1,74 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import LoginDialog from "./LoginDialog";
 import SignUpDialog from "./SignUpDialog";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const { user, checkAuth, logout } = useAuthStore();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md fixed w-full z-50">
       <div className="container mx-auto flex items-center justify-between p-4">
+        {/* Logo */}
         <div className="flex items-center space-x-2">
-          <img src="/images/logo.png" alt="Bookworm Logo" className="h-8" />
+          <Link href="/">
+            <img
+              src="/images/logo.png"
+              alt="Bookworm Logo"
+              className="h-8 cursor-pointer"
+            />
+          </Link>
         </div>
 
+        {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">
-          <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
-              Home
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
-              About
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
-              Contact
-            </a>
-          </li>
+          {["Home", "About", "Contact"].map((item, index) => (
+            <li key={index}>
+              <Link
+                href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                className="text-gray-800 hover:text-gray-600 transition duration-200"
+              >
+                {item}
+              </Link>
+            </li>
+          ))}
         </ul>
+
+        {/* User Authentication & Dropdown */}
         <div className="flex items-center space-x-4">
           {user ? (
-            <div className="relative group">
-              <button className="text-gray-800 hover:text-gray-600">
-                {user.email}
-              </button>
-              <ul className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded">
-                <li>
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={logout}
-                    className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="text-gray-800 hover:text-gray-600 flex items-center gap-1">
+                {user.email} ▼
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="text-red-600 cursor-pointer"
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <>
               <LoginDialog />
@@ -67,7 +76,34 @@ export default function Navbar() {
             </>
           )}
         </div>
+
+        {/* Mobile Menu Toggle Button */}
+        <button
+          className="md:hidden text-gray-800 focus:outline-none"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white shadow-lg absolute w-full">
+          <ul className="flex flex-col items-center py-4 space-y-3">
+            {["Home", "About", "Contact"].map((item, index) => (
+              <li key={index}>
+                <Link
+                  href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                  className="text-gray-800 hover:text-gray-600 block"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </nav>
   );
 }

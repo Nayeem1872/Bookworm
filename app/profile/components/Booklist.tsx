@@ -8,13 +8,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import BookModals from "./BookModals";
 
 interface Book {
   _id: string;
@@ -22,11 +17,61 @@ interface Book {
   author: string;
   description: string;
   imageUrl?: string;
+  price: number;
+  rating: number;
+  genre: string;
   addedBy: string;
 }
 
-export default function BookList({ books }: { books: Book[] }) {
+export default function BookList({
+  books,
+  refreshBooks,
+}: {
+  books: Book[];
+  refreshBooks: () => void;
+}) {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const renderStars = (rating: number) => {
+    const maxStars = 5;
+    return (
+      "⭐".repeat(Math.round(rating)) +
+      "☆".repeat(maxStars - Math.round(rating))
+    );
+  };
+
+  // ✅ Open delete confirmation modal
+  const handleOpenDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  // ✅ Delete book function
+  const handleDeleteBook = async () => {
+    if (!selectedBook) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/books/delete/${selectedBook._id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success("Book deleted successfully!");
+        setSelectedBook(null);
+        refreshBooks(); // ✅ Refresh book list after deletion
+      } else {
+        toast.error(data.message || "Failed to delete book");
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the book.");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -44,7 +89,7 @@ export default function BookList({ books }: { books: Book[] }) {
             <Card
               key={book._id}
               className="shadow-lg hover:shadow-xl transition cursor-pointer"
-              onClick={() => setSelectedBook(book)} // ✅ Open modal on click
+              onClick={() => setSelectedBook(book)}
             >
               <CardHeader>
                 {book.imageUrl ? (
@@ -56,12 +101,12 @@ export default function BookList({ books }: { books: Book[] }) {
                 ) : (
                   <Skeleton className="w-full h-48 rounded-t-lg" />
                 )}
-
                 <CardTitle className="mt-2">{book.title}</CardTitle>
                 <CardDescription>By {book.author}</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600">Genre: {book.genre}</p>
+                <p className="text-xs text-gray-500">
                   Added by: {book.addedBy}
                 </p>
               </CardContent>
@@ -70,44 +115,19 @@ export default function BookList({ books }: { books: Book[] }) {
         </div>
       )}
 
-      {/* ✅ Book Details Modal */}
-      <Dialog open={!!selectedBook} onOpenChange={() => setSelectedBook(null)}>
-        <DialogContent>
-          {selectedBook && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{selectedBook.title}</DialogTitle>
-              </DialogHeader>
-
-              <div className="flex flex-col items-center gap-4">
-                {selectedBook.imageUrl && (
-                  <img
-                    src={selectedBook.imageUrl}
-                    alt={selectedBook.title}
-                    className="w-full h-64 object-cover rounded"
-                  />
-                )}
-
-                <div className="text-lg font-semibold">
-                  Author: {selectedBook.author}
-                </div>
-                <p className="text-gray-700">{selectedBook.description}</p>
-                <p className="text-sm text-gray-500">
-                  Added by: {selectedBook.addedBy}
-                </p>
-
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedBook(null)}
-                  className="mt-2"
-                >
-                  Close
-                </Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* ✅ Use extracted modals */}
+      <BookModals
+        {...{
+          selectedBook,
+          setSelectedBook,
+          showDeleteModal,
+          setShowDeleteModal,
+          handleDeleteBook,
+          isDeleting,
+          handleOpenDeleteModal,
+          renderStars,
+        }}
+      />
     </div>
   );
 }
