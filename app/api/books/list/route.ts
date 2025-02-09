@@ -10,7 +10,6 @@ export async function GET() {
   try {
     await connectToDatabase();
 
-    // ✅ Get JWT token from cookies
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
 
@@ -18,7 +17,6 @@ export async function GET() {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // ✅ Verify token to get the logged-in user's email
     let decoded;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
@@ -28,10 +26,9 @@ export async function GET() {
 
     const userEmail = (decoded as jwt.JwtPayload).email;
 
-    // ✅ Fetch only books added by this user
-    const books = await Book.find({ addedBy: userEmail }).sort({
-      createdAt: -1,
-    });
+    const books = await Book.find({ addedBy: userEmail })
+      .select("title author description imageUrl addedBy createdAt")
+      .sort({ createdAt: -1 });
 
     return NextResponse.json({ books }, { status: 200 });
   } catch (error) {
