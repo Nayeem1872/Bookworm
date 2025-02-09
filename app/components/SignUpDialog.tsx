@@ -8,6 +8,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 export default function SignUpDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,9 +19,8 @@ export default function SignUpDialog() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if passwords match
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -35,23 +35,22 @@ export default function SignUpDialog() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("User registered successfully");
+        toast.success("User registered successfully");
         setIsOpen(false);
 
         setEmail("");
         setPassword("");
         setConfirmPassword("");
       } else {
-        alert(data.message || "Failed to register");
+        toast.error(data.message || "Failed to register");
       }
     } catch (error) {
-      alert("An error occurred during sign up");
+      toast.error("An error occurred during sign up");
     }
   };
 
   return (
     <>
-      {/* Trigger Button */}
       <Button
         onClick={() => setIsOpen(true)}
         className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
@@ -59,14 +58,12 @@ export default function SignUpDialog() {
         Sign Up
       </Button>
 
-      {/* Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Sign Up</DialogTitle>
           </DialogHeader>
 
-          {/* Form */}
           <form className="space-y-4" onSubmit={handleSignUp}>
             <div>
               <label className="block text-sm font-medium text-gray-800">

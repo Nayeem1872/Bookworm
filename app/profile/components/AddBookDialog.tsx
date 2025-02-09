@@ -8,6 +8,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 export default function AddBookDialog({
   refreshBooks,
@@ -32,17 +33,17 @@ export default function AddBookDialog({
 
       const data = await response.json();
       if (response.ok) {
-        alert("Book added successfully!");
+        toast.success("Book added successfully!");
         setIsOpen(false);
         setTitle("");
         setAuthor("");
 
-        refreshBooks(); // ✅ Call parent function to refresh books
+        refreshBooks();
       } else {
-        alert(data.message || "Failed to add book");
+        toast.error(data.message || "Failed to add book");
       }
     } catch (error) {
-      alert("An error occurred while adding the book.");
+      toast.error("An error occurred while adding the book.");
     }
   };
 

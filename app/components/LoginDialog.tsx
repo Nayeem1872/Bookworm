@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
+import toast from "react-hot-toast";
 
 export default function LoginDialog() {
   const { login } = useAuthStore();
@@ -30,17 +31,16 @@ export default function LoginDialog() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Login successful!");
-        setIsOpen(false);
-
+        toast.success("Login successful!");
         login(data.token);
+        setIsOpen(false);
         setEmail("");
         setPassword("");
       } else {
-        alert(data.message || "Login failed");
+        toast.error(data.message || "Login failed");
       }
     } catch (error) {
-      alert("An error occurred during login");
+      toast.error("An error occurred during login");
     }
   };
 

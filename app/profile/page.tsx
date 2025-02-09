@@ -32,16 +32,17 @@ export default function Profile() {
   if (!isMounted) return null;
 
   return (
-    <div className="container mx-auto p-4">
+    <>
       <Navbar />
+
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold">User Profile</h1>
         <p>Welcome to your profile page!</p>
+
+        {isAuthenticated() && <AddBookDialog refreshBooks={fetchBooks} />}
       </div>
 
-      {isAuthenticated() && <AddBookDialog refreshBooks={fetchBooks} />}
-
       <BookList books={books} />
-    </div>
+    </>
   );
 }

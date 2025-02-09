@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 import Book from "@/models/Book";
-import { cookies } from "next/headers"; // ✅ Import Next.js cookie helper
+import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
 export async function POST(req: Request) {
   try {
-    // ✅ Extract token from cookies instead of headers
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
 
@@ -19,7 +18,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Verify JWT
     let decoded;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
@@ -27,7 +25,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid token" }, { status: 403 });
     }
 
-    // Get book data from request body
     const { title, author } = await req.json();
     if (!title || !author) {
       return NextResponse.json(
@@ -38,7 +35,6 @@ export async function POST(req: Request) {
 
     await connectToDatabase();
 
-    // Create and save new book
     const newBook = new Book({
       title,
       author,

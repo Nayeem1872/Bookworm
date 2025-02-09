@@ -37,7 +37,6 @@ export default function Navbar() {
         </ul>
         <div className="flex items-center space-x-4">
           {user ? (
-            // Show user account menu if logged in
             <div className="relative group">
               <button className="text-gray-800 hover:text-gray-600">
                 {user.email}
@@ -45,7 +44,7 @@ export default function Navbar() {
               <ul className="absolute hidden group-hover:block bg-white shadow-md p-2 rounded">
                 <li>
                   <Link
-                    href="/profile" // ✅ Replace `#` with actual profile page route
+                    href="/profile"
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
                     Profile
