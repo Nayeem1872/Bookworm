@@ -1,29 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function FilterAndSort() {
+interface FilterProps {
+  onFilterChange: (filters: { priceRange: string; rating: number | null; selectedGenres: string[] }) => void;
+}
+
+export default function FilterAndSort({ onFilterChange }: FilterProps) {
   const [priceRange, setPriceRange] = useState<string>("all");
   const [rating, setRating] = useState<number | null>(null);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const genres = ["Fiction", "Non-Fiction", "Science", "Romance", "Mystery"];
 
-  // Handle genre selection
+  // Update filters immediately on selection
+  useEffect(() => {
+    onFilterChange({ priceRange, rating, selectedGenres });
+  }, [priceRange, rating, selectedGenres, onFilterChange]);
+
   const toggleGenre = (genre: string) => {
-    if (selectedGenres.includes(genre)) {
-      setSelectedGenres(selectedGenres.filter((g) => g !== genre));
-    } else {
-      setSelectedGenres([...selectedGenres, genre]);
-    }
+    setSelectedGenres((prevGenres) =>
+      prevGenres.includes(genre) ? prevGenres.filter((g) => g !== genre) : [...prevGenres, genre]
+    );
   };
 
   return (
-    <div className="flex flex-wrap p-6 bg-white  gap-6">
+    <div className="flex flex-wrap p-6 bg-white gap-6">
       {/* Sort By Price */}
       <div className="flex-1 min-w-[200px]">
-        <label className="block font-medium text-gray-800">
-          Sort by Price:
-        </label>
+        <label className="block font-medium text-gray-800">Sort by Price:</label>
         <select
           value={priceRange}
           onChange={(e) => setPriceRange(e.target.value)}
@@ -37,9 +41,7 @@ export default function FilterAndSort() {
 
       {/* Filter By Rating */}
       <div className="flex-1 min-w-[200px]">
-        <label className="block font-medium text-gray-800">
-          Filter by Rating:
-        </label>
+        <label className="block font-medium text-gray-800">Filter by Rating:</label>
         <select
           value={rating ?? ""}
           onChange={(e) => setRating(Number(e.target.value) || null)}
@@ -56,9 +58,7 @@ export default function FilterAndSort() {
 
       {/* Filter By Genre */}
       <div className="flex-1 min-w-[200px]">
-        <label className="block font-medium text-gray-800">
-          Filter by Genre:
-        </label>
+        <label className="block font-medium text-gray-800">Filter by Genre:</label>
         <div className="flex flex-col space-y-2 mt-2">
           {genres.map((genre) => (
             <label key={genre} className="flex items-center space-x-2">
@@ -72,16 +72,6 @@ export default function FilterAndSort() {
             </label>
           ))}
         </div>
-      </div>
-
-      {/* Apply Filters Button */}
-      <div className="min-w-[200px] flex items-end">
-        <button
-          onClick={() => console.log({ priceRange, rating, selectedGenres })}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Apply Filters
-        </button>
       </div>
     </div>
   );

@@ -6,9 +6,8 @@ export async function GET() {
   try {
     await connectToDatabase();
 
-    // ✅ Fetch all books without filtering by user
     const books = await Book.find()
-      .select("title author description imageUrl addedBy createdAt")
+      .select("title author description imageUrl price rating genre addedBy createdAt")
       .sort({ createdAt: -1 });
 
     return NextResponse.json({ books }, { status: 200 });

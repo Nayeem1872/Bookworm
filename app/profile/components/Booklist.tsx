@@ -33,6 +33,9 @@ export default function BookList({
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const renderStars = (rating: number) => {
     const maxStars = 5;
@@ -42,12 +45,10 @@ export default function BookList({
     );
   };
 
-  // ✅ Open delete confirmation modal
   const handleOpenDeleteModal = () => {
     setShowDeleteModal(true);
   };
 
-  // ✅ Delete book function
   const handleDeleteBook = async () => {
     if (!selectedBook) return;
 
@@ -61,7 +62,7 @@ export default function BookList({
       if (response.ok) {
         toast.success("Book deleted successfully!");
         setSelectedBook(null);
-        refreshBooks(); // ✅ Refresh book list after deletion
+        refreshBooks();
       } else {
         toast.error(data.message || "Failed to delete book");
       }
@@ -77,11 +78,10 @@ export default function BookList({
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Book List</h1>
 
-      {!books.length ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-64 w-full" />
-          <Skeleton className="h-64 w-full" />
+      {books.length === 0 ? (
+        <div className="text-center p-6 border border-gray-300 rounded-lg">
+          <p className="text-gray-600 text-lg">You don't have any books yet.</p>
+          <p className="text-sm text-gray-500">Start by adding a new book!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -92,14 +92,20 @@ export default function BookList({
               onClick={() => setSelectedBook(book)}
             >
               <CardHeader>
-                {book.imageUrl ? (
+                {loadingImages[book._id] ? (
+                  <Skeleton className="w-full h-48 object-cover rounded-t-lg" />
+                ) : (
                   <img
                     src={book.imageUrl}
                     alt={book.title}
                     className="w-full h-48 object-cover rounded-t-lg"
+                    onLoad={() =>
+                      setLoadingImages((prev) => ({ ...prev, [book._id]: false }))
+                    }
+                    onError={() =>
+                      setLoadingImages((prev) => ({ ...prev, [book._id]: false }))
+                    }
                   />
-                ) : (
-                  <Skeleton className="w-full h-48 rounded-t-lg" />
                 )}
                 <CardTitle className="mt-2">{book.title}</CardTitle>
                 <CardDescription>By {book.author}</CardDescription>
@@ -115,7 +121,6 @@ export default function BookList({
         </div>
       )}
 
-      {/* ✅ Use extracted modals */}
       <BookModals
         {...{
           selectedBook,

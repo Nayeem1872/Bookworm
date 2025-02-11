@@ -25,8 +25,6 @@ export async function GET() {
     }
 
     const userEmail = (decoded as jwt.JwtPayload).email;
-
-    // ✅ Ensure all fields are selected, including `price`, `rating`, and `genre`
     const books = await Book.find({ addedBy: userEmail })
       .select(
         "title author description imageUrl price rating genre addedBy createdAt"

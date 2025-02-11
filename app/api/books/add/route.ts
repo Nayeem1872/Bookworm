@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import cloudinary from "@/lib/cloudinary";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(req: Request) {
   try {
@@ -30,18 +31,23 @@ export async function POST(req: Request) {
     const title = formData.get("title")?.toString().trim();
     const author = formData.get("author")?.toString().trim();
     const description = formData.get("description")?.toString().trim();
-    const price = parseFloat(formData.get("price")?.toString() || "0"); // ✅ Parse price
-    const rating = parseFloat(formData.get("rating")?.toString() || "0"); // ✅ Parse rating
-    const genre = formData.get("genre")?.toString().trim(); // ✅ Get genre
-    const imageFile = formData.get("image");
+    const price = parseFloat(formData.get("price")?.toString() || "0"); 
+    const rating = parseFloat(formData.get("rating")?.toString() || "0"); 
+    const genre = formData.get("genre")?.toString().trim(); 
+    const imageFile = formData.get("image") as Blob;
 
     if (!title || !author || !description || !price || !genre || !imageFile) {
       console.error("❌ Missing required fields");
       return NextResponse.json(
-        {
-          message:
-            "All fields (title, author, description, price, genre, image) are required",
-        },
+        { message: "All fields (title, author, description, price, genre, image) are required" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ Check Image Size
+    if (imageFile.size > MAX_IMAGE_SIZE) {
+      return NextResponse.json(
+        { message: `Image size should be less than ${MAX_IMAGE_SIZE / (1024 * 1024)}MB` },
         { status: 400 }
       );
     }
@@ -51,7 +57,7 @@ export async function POST(req: Request) {
     let uploadedImageUrl = "";
 
     try {
-      const imageBuffer = await (imageFile as Blob).arrayBuffer();
+      const imageBuffer = await imageFile.arrayBuffer();
       const base64Image = Buffer.from(imageBuffer).toString("base64");
 
       const uploadedImage = await cloudinary.uploader.upload(
@@ -62,10 +68,7 @@ export async function POST(req: Request) {
       uploadedImageUrl = uploadedImage.secure_url;
     } catch (imageUploadError) {
       return NextResponse.json(
-        {
-          message: "Image upload failed",
-          error: (imageUploadError as Error).message,
-        },
+        { message: "Image upload failed", error: (imageUploadError as Error).message },
         { status: 500 }
       );
     }
@@ -81,9 +84,9 @@ export async function POST(req: Request) {
       title,
       author,
       description,
-      price, // ✅ Added price
-      rating, // ✅ Added rating
-      genre, // ✅ Added genre
+      price,
+      rating,
+      genre,
       imageUrl: uploadedImageUrl,
       addedBy: (decoded as jwt.JwtPayload).email,
     });
