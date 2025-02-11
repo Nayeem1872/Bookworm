@@ -20,13 +20,13 @@ export async function POST(req: Request) {
 
     await connectToDatabase();
 
-    // Find the user by email
+
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    // Compare hashed password with entered password
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -35,20 +35,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate JWT Token
+
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // Set cookie with JWT
+
     const serializedCookie = serialize("authToken", token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7, 
     });
 
     const response = NextResponse.json({

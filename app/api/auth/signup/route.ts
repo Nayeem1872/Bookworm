@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     await connectToDatabase();
 
-    // Check if user already exists
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash the password and save user
+  
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hashedPassword });
     await user.save();

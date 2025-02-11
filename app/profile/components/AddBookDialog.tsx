@@ -91,14 +91,12 @@ export default function AddBookDialog({
         Add New Book
       </Button>
 
-      {/* Book Form Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add a New Book</DialogTitle>
           </DialogHeader>
 
-          {/* Book Form */}
           <form className="space-y-4" onSubmit={handleAddBook}>
             <div>
               <label className="block text-sm font-medium text-gray-800">

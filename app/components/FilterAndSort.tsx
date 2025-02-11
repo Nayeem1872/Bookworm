@@ -2,7 +2,11 @@
 import { useState, useEffect } from "react";
 
 interface FilterProps {
-  onFilterChange: (filters: { priceRange: string; rating: number | null; selectedGenres: string[] }) => void;
+  onFilterChange: (filters: {
+    priceRange: string;
+    rating: number | null;
+    selectedGenres: string[];
+  }) => void;
 }
 
 export default function FilterAndSort({ onFilterChange }: FilterProps) {
@@ -12,22 +16,24 @@ export default function FilterAndSort({ onFilterChange }: FilterProps) {
 
   const genres = ["Fiction", "Non-Fiction", "Science", "Romance", "Mystery"];
 
-  // Update filters immediately on selection
   useEffect(() => {
     onFilterChange({ priceRange, rating, selectedGenres });
   }, [priceRange, rating, selectedGenres, onFilterChange]);
 
   const toggleGenre = (genre: string) => {
     setSelectedGenres((prevGenres) =>
-      prevGenres.includes(genre) ? prevGenres.filter((g) => g !== genre) : [...prevGenres, genre]
+      prevGenres.includes(genre)
+        ? prevGenres.filter((g) => g !== genre)
+        : [...prevGenres, genre]
     );
   };
 
   return (
     <div className="flex flex-wrap p-6 bg-white gap-6">
-      {/* Sort By Price */}
-      <div className="flex-1 min-w-[200px]">
-        <label className="block font-medium text-gray-800">Sort by Price:</label>
+      <div className="w-full">
+        <label className="block font-medium text-gray-800">
+          Sort by Price:
+        </label>
         <select
           value={priceRange}
           onChange={(e) => setPriceRange(e.target.value)}
@@ -39,9 +45,10 @@ export default function FilterAndSort({ onFilterChange }: FilterProps) {
         </select>
       </div>
 
-      {/* Filter By Rating */}
-      <div className="flex-1 min-w-[200px]">
-        <label className="block font-medium text-gray-800">Filter by Rating:</label>
+      <div className="w-full">
+        <label className="block font-medium text-gray-800">
+          Filter by Rating:
+        </label>
         <select
           value={rating ?? ""}
           onChange={(e) => setRating(Number(e.target.value) || null)}
@@ -56,9 +63,10 @@ export default function FilterAndSort({ onFilterChange }: FilterProps) {
         </select>
       </div>
 
-      {/* Filter By Genre */}
       <div className="flex-1 min-w-[200px]">
-        <label className="block font-medium text-gray-800">Filter by Genre:</label>
+        <label className="block font-medium text-gray-800">
+          Filter by Genre:
+        </label>
         <div className="flex flex-col space-y-2 mt-2">
           {genres.map((genre) => (
             <label key={genre} className="flex items-center space-x-2">

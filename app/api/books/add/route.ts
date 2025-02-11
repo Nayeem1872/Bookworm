@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Check Image Size
+ 
     if (imageFile.size > MAX_IMAGE_SIZE) {
       return NextResponse.json(
         { message: `Image size should be less than ${MAX_IMAGE_SIZE / (1024 * 1024)}MB` },

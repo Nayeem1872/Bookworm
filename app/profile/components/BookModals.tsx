@@ -7,7 +7,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
 
 interface Book {
   _id: string;
@@ -42,7 +41,6 @@ export default function BookModals({
 }) {
   return (
     <>
-      {/* ✅ Book Details Modal */}
       <Dialog open={!!selectedBook} onOpenChange={() => setSelectedBook(null)}>
         <DialogContent className="max-w-lg md:max-w-2xl p-6 rounded-lg">
           {selectedBook && (
@@ -56,7 +54,6 @@ export default function BookModals({
                 </p>
               </DialogHeader>
 
-              {/* Image Section */}
               {selectedBook.imageUrl && (
                 <div className="w-full h-72 overflow-hidden rounded-lg shadow-lg">
                   <img
@@ -67,7 +64,6 @@ export default function BookModals({
                 </div>
               )}
 
-              {/* Book Details */}
               <div className="text-center space-y-4">
                 <p className="text-gray-700 text-base">
                   {selectedBook.description}
@@ -93,7 +89,6 @@ export default function BookModals({
                 </p>
               </div>
 
-              {/* ✅ Buttons */}
               <div className="flex justify-between mt-6">
                 <Button
                   variant="destructive"
@@ -115,7 +110,6 @@ export default function BookModals({
         </DialogContent>
       </Dialog>
 
-      {/* ✅ Delete Confirmation Modal */}
       <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
         <DialogContent className="max-w-md p-6 rounded-lg">
           <DialogHeader className="text-center">

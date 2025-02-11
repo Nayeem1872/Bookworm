@@ -40,7 +40,7 @@ export default function Home() {
         const response = await fetch("/api/books/all");
         const data = await response.json();
         setBooks(data.books);
-        setFilteredBooks(data.books); // Initially, all books are displayed
+        setFilteredBooks(data.books);
       } catch (error) {
         console.error("Error fetching books:", error);
       } finally {
@@ -53,32 +53,31 @@ export default function Home() {
 
   const applyFilters = useCallback(() => {
     let filtered = [...books];
-  
-    // Ensure rating is a valid number before filtering
+
     const minRating = filterOptions.rating ?? 0;
-  
-    // Filter by rating (only if a rating is selected)
+
     if (filterOptions.rating !== null) {
-      filtered = filtered.filter((book) => book.rating !== undefined && book.rating >= minRating);
+      filtered = filtered.filter(
+        (book) => book.rating !== undefined && book.rating >= minRating
+      );
     }
-  
-    // Filter by genre (only if genres are selected)
+
     if (filterOptions.selectedGenres.length > 0) {
-      filtered = filtered.filter((book) => book.genre && filterOptions.selectedGenres.includes(book.genre));
+      filtered = filtered.filter(
+        (book) =>
+          book.genre && filterOptions.selectedGenres.includes(book.genre)
+      );
     }
-  
-    // Sort by price
+
     if (filterOptions.priceRange === "low-to-high") {
       filtered.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     } else if (filterOptions.priceRange === "high-to-low") {
       filtered.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
     }
-  
+
     setFilteredBooks(filtered);
   }, [books, filterOptions]);
-  
 
-  // Ensure filtering is applied whenever `filterOptions` change
   useEffect(() => {
     applyFilters();
   }, [filterOptions, applyFilters]);
@@ -88,18 +87,22 @@ export default function Home() {
       <Navbar />
       <div className="container mx-auto p-4 md:p-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16">
-          {/* Filter Sidebar */}
-          <div className="md:col-span-1 bg-white p-4 h-[750] rounded shadow hidden sm:block">
+          <div className="md:col-span-1 bg-white p-4 h-[750] rounded shadow ">
             <FilterAndSort onFilterChange={setFilterOptions} />
           </div>
 
-          {/* Filtered Book List */}
-          <BookList books={filteredBooks} loading={loading} onSelectBook={setSelectedBook} />
+          <BookList
+            books={filteredBooks}
+            loading={loading}
+            onSelectBook={setSelectedBook}
+          />
         </div>
       </div>
 
-      {/* Book Details Dialog */}
-      <BookDetailsDialog book={selectedBook} onClose={() => setSelectedBook(null)} />
+      <BookDetailsDialog
+        book={selectedBook}
+        onClose={() => setSelectedBook(null)}
+      />
     </>
   );
 }

@@ -53,14 +53,12 @@ export default function LoginDialog() {
         Login
       </Button>
 
-      {/* Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Login</DialogTitle>
           </DialogHeader>
 
-          {/* Form */}
           <form className="space-y-4" onSubmit={handleLogin}>
             <div>
               <label className="block text-sm font-medium text-gray-800">

@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 interface BookDetailsDialogProps {
@@ -6,7 +11,10 @@ interface BookDetailsDialogProps {
   onClose: () => void;
 }
 
-export default function BookDetailsDialog({ book, onClose }: BookDetailsDialogProps) {
+export default function BookDetailsDialog({
+  book,
+  onClose,
+}: BookDetailsDialogProps) {
   return (
     <Dialog open={!!book} onOpenChange={onClose}>
       <DialogContent>

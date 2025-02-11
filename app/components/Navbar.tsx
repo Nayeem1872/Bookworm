@@ -24,7 +24,6 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md fixed w-full z-50">
       <div className="container mx-auto flex items-center justify-between p-4">
-        {/* Logo */}
         <div className="flex items-center space-x-2">
           <Link href="/">
             <img
@@ -35,7 +34,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">
           {["Home", "About", "Contact"].map((item, index) => (
             <li key={index}>
@@ -49,7 +47,6 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* User Authentication & Dropdown */}
         <div className="flex items-center space-x-4">
           {user ? (
             <DropdownMenu>
@@ -77,7 +74,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Toggle Button */}
         <button
           className="md:hidden text-gray-800 focus:outline-none"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -86,7 +82,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg absolute w-full">
           <ul className="flex flex-col items-center py-4 space-y-3">

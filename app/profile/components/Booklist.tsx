@@ -33,9 +33,9 @@ export default function BookList({
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [loadingImages, setLoadingImages] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [loadingImages, setLoadingImages] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const renderStars = (rating: number) => {
     const maxStars = 5;
@@ -100,10 +100,16 @@ export default function BookList({
                     alt={book.title}
                     className="w-full h-48 object-cover rounded-t-lg"
                     onLoad={() =>
-                      setLoadingImages((prev) => ({ ...prev, [book._id]: false }))
+                      setLoadingImages((prev) => ({
+                        ...prev,
+                        [book._id]: false,
+                      }))
                     }
                     onError={() =>
-                      setLoadingImages((prev) => ({ ...prev, [book._id]: false }))
+                      setLoadingImages((prev) => ({
+                        ...prev,
+                        [book._id]: false,
+                      }))
                     }
                   />
                 )}
